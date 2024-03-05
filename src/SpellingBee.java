@@ -69,6 +69,7 @@ public class SpellingBee {
     //  If it is not in the dictionary, remove it from words.
     public void checkWords() {
         // YOUR CODE HERE
+
     }
 
     // Prints all valid words to wordList.txt
