@@ -22,9 +22,9 @@ import java.util.Scanner;
  * It utilizes recursion to generate the strings, mergesort to sort them, and
  * binary search to find them in a dictionary.
  *
- * @author Zach Blick, [ADD YOUR NAME HERE]
+ * @author Zach Blick, Annie Virsik
  *
- * Written on March 5, 2023 for CS2 @ Menlo School
+ * Written on March 21, 2023 for CS2 @ Menlo School
  *
  * DO NOT MODIFY MAIN OR ANY OF THE METHOD HEADERS.
  */
@@ -38,26 +38,23 @@ public class SpellingBee {
     public SpellingBee(String letters) {
         this.letters = letters;
         words = new ArrayList<String>();
-
-//        // testing
-//        words.add("e");
-//        words.add("h");
-//        words.add("i");
     }
 
     // TODO: generate all possible substrings and permutations of the letters.
     //  Store them all in the ArrayList words. Do this by calling ANOTHER method
     //  that will find the substrings recursively.
     public void generate() {
-        // YOUR CODE HERE — Call your recursive method!
+        // YOUR CODE HERE
+        // Calls recursive method
         wordCombos("", letters);
     }
 
+    // Recursive method that generates all combinations of words and adds them to the words array
     public void wordCombos(String placeholder, String letters) {
         // Base case
         words.add(placeholder);
         for (int i = 0; i < letters.length(); i++) {
-            wordCombos(placeholder + letters.substring(i, i+1), letters.substring(0, i) + letters.substring(i+1));
+            wordCombos(placeholder + letters.charAt(i), letters.substring(0, i) + letters.substring(i+1));
         }
     }
 
@@ -65,32 +62,31 @@ public class SpellingBee {
     //  that will find the substrings recursively.
     public void sort() {
         // YOUR CODE HERE
+        // Calls recursive sorting algorithm
         words = mergeSort(words, 0, words.size()-1);
     }
 
     // Recursive method Mergesort algorithm
     public ArrayList<String> mergeSort(ArrayList<String> words, int start, int end) {
-        // Base case
-        System.out.println(words);
-        if (end-start == 1 || end-start == 0) {
+        // Base case - if there is one thing in the array add value to arr and return arr
+        if (end-start == 0) {
             ArrayList<String> arr = new ArrayList<String>();
+            arr.add(words.get(start));
             return arr;
         }
         int mid = (start + end) / 2;
-//        System.out.println("Array 1: " + words + ", start: " + start + " Mid: " + mid);
         ArrayList<String> arr1 = mergeSort(words, start, mid);
         ArrayList<String> arr2 = mergeSort(words, mid+1, end);
         return compare(arr1, arr2);
     }
 
+    // The part of mergeSort that compares the values
     public ArrayList<String> compare(ArrayList<String> arr1, ArrayList<String> arr2) {
         ArrayList<String> arr = new ArrayList<String>();
         int idx1 = 0;
         int idx2 = 0;
-        int count = 0;
         // While there is still stuff in the array
-        while (idx1 < arr.size() && idx2 < arr.size()) {
-            // If
+        while (idx1 < arr1.size() && idx2 < arr2.size()) {
             if (arr1.get(idx1).compareTo(arr2.get(idx2)) < 0) {
                 arr.add(arr1.get(idx1++));
             }
@@ -99,11 +95,11 @@ public class SpellingBee {
             }
         }
         // Copy over remaining elements
-        while (idx1 < arr1.size() && count < arr1.size()) {
+        while (idx1 < arr1.size()) {
             arr.add(arr1.get(idx1++));
         }
         while (idx2 < arr2.size()) {
-            arr.add(arr1.get(idx2++));
+            arr.add(arr2.get(idx2++));
         }
         return arr;
     }
@@ -125,32 +121,31 @@ public class SpellingBee {
     public void checkWords() {
         // YOUR CODE HERE
         for (int i = 0; i < words.size(); i++) {
-            // If the word is in the dictionary go to the next word in the arraylist
-            if (found(words.get(i), 0, DICTIONARY.length-1)) {
-                break;
-            }
             // If the word is not in the dictionary remove it from the arraylist
-            else {
+            if (!found(words.get(i), 0, DICTIONARY.length-1)) {
                 words.remove(i);
+                i--;
             }
         }
     }
 
     // Recursive binary search algorithm
     public boolean found(String word, int start, int end) {
-//        int mid = start + (end - start) / 2;
-        int mid = (end - start) / 2;
-        // Base case
+        int mid = start + (end - start) / 2;
+        // Base cases
+        // If the starting index is less then the ending index return false
         if (start > end) {
             return false;
         }
+        // If the middle point is the word return true
         if (DICTIONARY[mid].equals(word)) {
             return true;
         }
+        // Runs found on either the first half or second half of the array
         if (word.compareTo(DICTIONARY[mid]) < 0) {
             return found(word, start,mid-1);
         }
-        return found(word, mid+1, DICTIONARY.length);
+        return found(word, mid+1, end);
     }
 
     // Prints all valid words to wordList.txt
